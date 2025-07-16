@@ -146,9 +146,248 @@ public class Main {
     }
 
     private static void menuGestaoAdocoes() {
-        System.out.println("\n=== GESTÃO DE ADOÇÕES ===");
-        System.out.println("Funcionalidade será implementada no exercício 7.");
+        boolean voltarMenu = false;
+
+        while (!voltarMenu) {
+            System.out.println("\n========== GESTÃO DE ADOÇÕES ==========");
+            System.out.println("[1] Gerar Adoção");
+            System.out.println("[2] Realizar Adoção");
+            System.out.println("[3] Listar Adoções");
+            System.out.println("[4] Voltar ao Menu Principal");
+            System.out.println("======================================");
+            System.out.print("Escolha uma opção: ");
+
+            try {
+                int opcao = scanner.nextInt();
+                scanner.nextLine();
+
+                switch (opcao) {
+                    case 1:
+                        gerarAdocao();
+                        break;
+                    case 2:
+                        realizarAdocao();
+                        break;
+                    case 3:
+                        listarAdocoes();
+                        break;
+                    case 4:
+                        voltarMenu = true;
+                        break;
+                    default:
+                        System.out.println("Opção inválida! Tente novamente.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida! Digite apenas números.");
+                scanner.nextLine();
+            }
+        }
+    }
+
+    private static void gerarAdocao() {
+        System.out.println("\n=== GERAR NOVA ADOÇÃO ===");
+
+        if (adotantes.isEmpty()) {
+            System.out.println("Nenhum adotante cadastrado!");
+            System.out.println("Pressione Enter para continuar...");
+            scanner.nextLine();
+            return;
+        }
+
+        if (animais.isEmpty()) {
+            System.out.println("Nenhum animal cadastrado!");
+            System.out.println("Pressione Enter para continuar...");
+            scanner.nextLine();
+            return;
+        }
+
+        System.out.print("Digite o CPF do adotante: ");
+        String cpf = scanner.nextLine();
+
+        Adotante adotanteSelecionado = null;
+        for (Adotante adotante : adotantes) {
+            if (adotante.getCpf().equals(cpf)) {
+                adotanteSelecionado = adotante;
+                break;
+            }
+        }
+
+        if (adotanteSelecionado == null) {
+            System.out.println("Adotante não encontrado!");
+            System.out.println("Pressione Enter para continuar...");
+            scanner.nextLine();
+            return;
+        }
+
+        if (!adotanteSelecionado.validar()) {
+            System.out.println("ERRO: Adotante não está habilitado para adoção!");
+            System.out.println("Verifique se o adotante está ativo e com dados completos.");
+            System.out.println("Pressione Enter para continuar...");
+            scanner.nextLine();
+            return;
+        }
+
+        System.out.print("Digite o ID do animal: ");
+        String idAnimal = scanner.nextLine();
+
+        Animal animalSelecionado = null;
+        for (Animal animal : animais) {
+            if (animal.getId().equals(idAnimal)) {
+                animalSelecionado = animal;
+                break;
+            }
+        }
+
+        if (animalSelecionado == null) {
+            System.out.println("Animal não encontrado!");
+            System.out.println("Pressione Enter para continuar...");
+            scanner.nextLine();
+            return;
+        }
+
+        if (!animalSelecionado.validar()) {
+            System.out.println("ERRO: Animal não está disponível para adoção!");
+            System.out.println("Verifique se o animal está com status 'Disponível' e dados completos.");
+            System.out.println("Pressione Enter para continuar...");
+            scanner.nextLine();
+            return;
+        }
+
+        for (Adocao adocao : adocoes) {
+            if (adocao.getAnimalAdotado().getId().equals(idAnimal)) {
+                System.out.println("ERRO: Animal já está em processo de adoção!");
+                System.out.println("Pressione Enter para continuar...");
+                scanner.nextLine();
+                return;
+            }
+        }
+
+        String idAdocao = "A" + String.format("%03d", adocoes.size() + 1);
+
+        Adocao novaAdocao = new Adocao(idAdocao, adotanteSelecionado, animalSelecionado, new Date());
+        adocoes.add(novaAdocao);
+
+        animalSelecionado.setStatus("Em adoção");
+
+        System.out.println("✓ Adoção gerada com sucesso!");
+        System.out.println("ID da Adoção: " + idAdocao);
+        System.out.println("Adotante: " + adotanteSelecionado.getNome());
+        System.out.println("Animal: " + animalSelecionado.getNome());
+        System.out.println("Status: Termo NÃO assinado");
         System.out.println("Pressione Enter para continuar...");
+        scanner.nextLine();
+    }
+
+    private static void realizarAdocao() {
+        System.out.println("\n=== REALIZAR ADOÇÃO (Assinar Termo) ===");
+
+        if (adocoes.isEmpty()) {
+            System.out.println("Nenhuma adoção em andamento!");
+            System.out.println("Pressione Enter para continuar...");
+            scanner.nextLine();
+            return;
+        }
+
+        List<Adocao> adocoesPendentes = new ArrayList<>();
+        System.out.println("Adoções pendentes de assinatura:");
+
+        for (Adocao adocao : adocoes) {
+            if (!adocao.isTermoAssinado()) {
+                adocoesPendentes.add(adocao);
+                System.out.println("- ID: " + adocao.getId() +
+                        " | Adotante: " + adocao.getAdotante().getNome() +
+                        " | Animal: " + adocao.getAnimalAdotado().getNome());
+            }
+        }
+
+        if (adocoesPendentes.isEmpty()) {
+            System.out.println("Todas as adoções já foram realizadas!");
+            System.out.println("Pressione Enter para continuar...");
+            scanner.nextLine();
+            return;
+        }
+
+        System.out.print("\nDigite o ID da adoção para assinar o termo: ");
+        String idAdocao = scanner.nextLine();
+
+        Adocao adocaoEncontrada = null;
+        for (Adocao adocao : adocoesPendentes) {
+            if (adocao.getId().equals(idAdocao)) {
+                adocaoEncontrada = adocao;
+                break;
+            }
+        }
+
+        if (adocaoEncontrada == null) {
+            System.out.println("Adoção não encontrada ou já realizada!");
+            System.out.println("Pressione Enter para continuar...");
+            scanner.nextLine();
+            return;
+        }
+
+        System.out.println("\nDetalhes da adoção:");
+        System.out.println("Adotante: " + adocaoEncontrada.getAdotante().getNome());
+        System.out.println("Animal: " + adocaoEncontrada.getAnimalAdotado().getNome());
+        System.out.print("Confirma a assinatura do termo? (s/n): ");
+
+        String confirmacao = scanner.nextLine();
+
+        if (confirmacao.equalsIgnoreCase("s") || confirmacao.equalsIgnoreCase("sim")) {
+            adocaoEncontrada.setTermoAssinado(true);
+            adocaoEncontrada.getAnimalAdotado().setStatus("Adotado");
+
+            System.out.println("✓ Adoção realizada com sucesso!");
+            System.out.println("Termo assinado e animal marcado como 'Adotado'");
+        } else {
+            System.out.println("Operação cancelada.");
+        }
+
+        System.out.println("Pressione Enter para continuar...");
+        scanner.nextLine();
+    }
+
+    private static void listarAdocoes() {
+        System.out.println("\n=== LISTA DE TODAS AS ADOÇÕES ===");
+
+        if (adocoes.isEmpty()) {
+            System.out.println("Nenhuma adoção registrada!");
+        } else {
+            List<Adocao> adocoesPendentes = new ArrayList<>();
+            List<Adocao> adocoesRealizadas = new ArrayList<>();
+
+            for (Adocao adocao : adocoes) {
+                if (adocao.isTermoAssinado()) {
+                    adocoesRealizadas.add(adocao);
+                } else {
+                    adocoesPendentes.add(adocao);
+                }
+            }
+
+            if (!adocoesPendentes.isEmpty()) {
+                System.out.println("\n========== ADOÇÕES PENDENTES ==========");
+                for (int i = 0; i < adocoesPendentes.size(); i++) {
+                    System.out.println("\n--- Adoção Pendente " + (i + 1) + " ---");
+                    System.out.println(adocoesPendentes.get(i).toString());
+                    System.out.println("Status: TERMO NÃO ASSINADO");
+                }
+            }
+
+            if (!adocoesRealizadas.isEmpty()) {
+                System.out.println("\n========== ADOÇÕES REALIZADAS ==========");
+                for (int i = 0; i < adocoesRealizadas.size(); i++) {
+                    System.out.println("\n--- Adoção Realizada " + (i + 1) + " ---");
+                    System.out.println(adocoesRealizadas.get(i).toString());
+                    System.out.println("Status: TERMO ASSINADO");
+                }
+            }
+
+            System.out.println("\n========== RESUMO ==========");
+            System.out.println("Total de adoções: " + adocoes.size());
+            System.out.println("Adoções pendentes: " + adocoesPendentes.size());
+            System.out.println("Adoções realizadas: " + adocoesRealizadas.size());
+        }
+
+        System.out.println("\nPressione Enter para continuar...");
         scanner.nextLine();
     }
 
