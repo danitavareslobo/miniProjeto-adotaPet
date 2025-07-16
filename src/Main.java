@@ -99,16 +99,267 @@ public class Main {
     }
 
     private static void menuGestaoAnimais() {
-        System.out.println("\n=== GESTÃO DE ANIMAIS ===");
-        System.out.println("Funcionalidade será implementada no exercício 6.");
-        System.out.println("Pressione Enter para continuar...");
-        scanner.nextLine();
+        boolean voltarMenu = false;
+
+        while (!voltarMenu) {
+            System.out.println("\n========== GESTÃO DE ANIMAIS ==========");
+            System.out.println("[1] Adicionar Cachorro");
+            System.out.println("[2] Adicionar Gato");
+            System.out.println("[3] Remover Animal");
+            System.out.println("[4] Desabilitar/Habilitar Animal");
+            System.out.println("[5] Listar Todos Animais");
+            System.out.println("[6] Voltar ao Menu Principal");
+            System.out.println("======================================");
+            System.out.print("Escolha uma opção: ");
+
+            try {
+                int opcao = scanner.nextInt();
+                scanner.nextLine();
+
+                switch (opcao) {
+                    case 1:
+                        adicionarCachorro();
+                        break;
+                    case 2:
+                        adicionarGato();
+                        break;
+                    case 3:
+                        removerAnimal();
+                        break;
+                    case 4:
+                        habilitarDesabilitarAnimal();
+                        break;
+                    case 5:
+                        listarAnimais();
+                        break;
+                    case 6:
+                        voltarMenu = true;
+                        break;
+                    default:
+                        System.out.println("Opção inválida! Tente novamente.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida! Digite apenas números.");
+                scanner.nextLine();
+            }
+        }
     }
 
     private static void menuGestaoAdocoes() {
         System.out.println("\n=== GESTÃO DE ADOÇÕES ===");
         System.out.println("Funcionalidade será implementada no exercício 7.");
         System.out.println("Pressione Enter para continuar...");
+        scanner.nextLine();
+    }
+
+    private static void adicionarCachorro() {
+        System.out.println("\n=== ADICIONAR NOVO CACHORRO ===");
+
+        System.out.print("ID do Animal: ");
+        String id = scanner.nextLine();
+
+        for (Animal animal : animais) {
+            if (animal.getId().equals(id)) {
+                System.out.println("ERRO: ID já cadastrado!");
+                return;
+            }
+        }
+
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine();
+
+        System.out.print("Idade: ");
+        int idade = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("Condição de Saúde: ");
+        String condicaoSaude = scanner.nextLine();
+
+        System.out.print("Temperamento: ");
+        String temperamento = scanner.nextLine();
+
+        System.out.print("Porte (Pequeno/Médio/Grande): ");
+        String porte = scanner.nextLine();
+
+        System.out.print("Necessita passeio? (true/false): ");
+        boolean necessitaPasseio = scanner.nextBoolean();
+        scanner.nextLine();
+
+        Cao novoCao = new Cao(id, nome, "Cão", idade, condicaoSaude, temperamento, "Disponível", porte, necessitaPasseio);
+        animais.add(novoCao);
+
+        System.out.println("✓ Cachorro cadastrado com sucesso!");
+        System.out.println("Pressione Enter para continuar...");
+        scanner.nextLine();
+    }
+
+    private static void adicionarGato() {
+        System.out.println("\n=== ADICIONAR NOVO GATO ===");
+
+        System.out.print("ID do Animal: ");
+        String id = scanner.nextLine();
+
+        for (Animal animal : animais) {
+            if (animal.getId().equals(id)) {
+                System.out.println("ERRO: ID já cadastrado!");
+                return;
+            }
+        }
+
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine();
+
+        System.out.print("Idade: ");
+        int idade = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("Condição de Saúde: ");
+        String condicaoSaude = scanner.nextLine();
+
+        System.out.print("Temperamento: ");
+        String temperamento = scanner.nextLine();
+
+        System.out.print("Convive com outros gatos? (true/false): ");
+        boolean conviveComOutrosGatos = scanner.nextBoolean();
+        scanner.nextLine();
+
+        Gato novoGato = new Gato(id, nome, "Gato", idade, condicaoSaude, temperamento, "Disponível", conviveComOutrosGatos);
+        animais.add(novoGato);
+
+        System.out.println("✓ Gato cadastrado com sucesso!");
+        System.out.println("Pressione Enter para continuar...");
+        scanner.nextLine();
+    }
+
+    private static void removerAnimal() {
+        System.out.println("\n=== REMOVER ANIMAL ===");
+
+        if (animais.isEmpty()) {
+            System.out.println("Nenhum animal cadastrado!");
+            System.out.println("Pressione Enter para continuar...");
+            scanner.nextLine();
+            return;
+        }
+
+        System.out.print("Digite o ID do animal a ser removido: ");
+        String id = scanner.nextLine();
+
+        Animal animalEncontrado = null;
+        for (Animal animal : animais) {
+            if (animal.getId().equals(id)) {
+                animalEncontrado = animal;
+                break;
+            }
+        }
+
+        if (animalEncontrado == null) {
+            System.out.println("Animal não encontrado!");
+            System.out.println("Pressione Enter para continuar...");
+            scanner.nextLine();
+            return;
+        }
+
+        for (Adocao adocao : adocoes) {
+            if (adocao.getAnimalAdotado().getId().equals(id)) {
+                System.out.println("ERRO: Animal não pode ser removido pois está em processo de adoção!");
+                System.out.println("Pressione Enter para continuar...");
+                scanner.nextLine();
+                return;
+            }
+        }
+
+        System.out.println("Animal encontrado: " + animalEncontrado.getNome() + " (" + animalEncontrado.getEspecie() + ")");
+        System.out.print("Confirma a remoção? (s/n): ");
+        String confirmacao = scanner.nextLine();
+
+        if (confirmacao.equalsIgnoreCase("s") || confirmacao.equalsIgnoreCase("sim")) {
+            animais.remove(animalEncontrado);
+            System.out.println("✓ Animal removido com sucesso!");
+        } else {
+            System.out.println("Operação cancelada.");
+        }
+
+        System.out.println("Pressione Enter para continuar...");
+        scanner.nextLine();
+    }
+
+    private static void habilitarDesabilitarAnimal() {
+        System.out.println("\n=== HABILITAR/DESABILITAR ANIMAL ===");
+
+        if (animais.isEmpty()) {
+            System.out.println("Nenhum animal cadastrado!");
+            System.out.println("Pressione Enter para continuar...");
+            scanner.nextLine();
+            return;
+        }
+
+        System.out.print("Digite o ID do animal: ");
+        String id = scanner.nextLine();
+
+        Animal animalEncontrado = null;
+        for (Animal animal : animais) {
+            if (animal.getId().equals(id)) {
+                animalEncontrado = animal;
+                break;
+            }
+        }
+
+        if (animalEncontrado == null) {
+            System.out.println("Animal não encontrado!");
+            System.out.println("Pressione Enter para continuar...");
+            scanner.nextLine();
+            return;
+        }
+
+        System.out.println("Animal: " + animalEncontrado.getNome() + " - Status atual: " + animalEncontrado.getStatus());
+
+        if (animalEncontrado.getStatus().equals("Disponível")) {
+            animalEncontrado.setStatus("Indisponível");
+            System.out.println("✓ Animal marcado como INDISPONÍVEL para adoção");
+        } else {
+            animalEncontrado.setStatus("Disponível");
+            System.out.println("✓ Animal marcado como DISPONÍVEL para adoção");
+        }
+
+        System.out.println("Pressione Enter para continuar...");
+        scanner.nextLine();
+    }
+
+    private static void listarAnimais() {
+        System.out.println("\n=== LISTA DE TODOS OS ANIMAIS ===");
+
+        if (animais.isEmpty()) {
+            System.out.println("Nenhum animal cadastrado!");
+        } else {
+            List<Animal> caes = new ArrayList<>();
+            List<Animal> gatos = new ArrayList<>();
+
+            for (Animal animal : animais) {
+                if (animal instanceof Cao) {
+                    caes.add(animal);
+                } else if (animal instanceof Gato) {
+                    gatos.add(animal);
+                }
+            }
+
+            if (!caes.isEmpty()) {
+                System.out.println("\n========== CÃES ==========");
+                for (int i = 0; i < caes.size(); i++) {
+                    System.out.println("\n--- Cão " + (i + 1) + " ---");
+                    System.out.println(caes.get(i).gerarRelatorio());
+                }
+            }
+
+            if (!gatos.isEmpty()) {
+                System.out.println("\n========== GATOS ==========");
+                for (int i = 0; i < gatos.size(); i++) {
+                    System.out.println("\n--- Gato " + (i + 1) + " ---");
+                    System.out.println(gatos.get(i).gerarRelatorio());
+                }
+            }
+        }
+
+        System.out.println("\nPressione Enter para continuar...");
         scanner.nextLine();
     }
 
@@ -121,7 +372,6 @@ public class Main {
         System.out.print("CPF: ");
         String cpf = scanner.nextLine();
 
-        // Verificar se CPF já existe
         for (Adotante adotante : adotantes) {
             if (adotante.getCpf().equals(cpf)) {
                 System.out.println("ERRO: CPF já cadastrado!");
@@ -206,7 +456,7 @@ public class Main {
             scanner.nextLine();
             return;
         }
-2
+
         System.out.print("Digite o CPF do adotante: ");
         String cpf = scanner.nextLine();
 
