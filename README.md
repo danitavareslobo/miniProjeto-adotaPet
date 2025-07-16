@@ -1,4 +1,4 @@
-# 🐾 AdotaPet - Sistema de Gestão de Adoções
+#AdotaPet - Sistema de Gestão de Adoções 🐾
 <div align="center">
   
 [![Java](https://img.shields.io/badge/Java-24-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
@@ -212,7 +212,7 @@ ID da adoção: A001
 
 **💜 Desenvolvido com carinho para ajudar nossos amigos de quatro patas! 🐕🐱**
 
-[⬆ Voltar ao topo](# 🐾 AdotaPet - Sistema de Gestão de Adoções)
+[⬆ Voltar ao topo](#AdotaPet)
 
 </div>
 
