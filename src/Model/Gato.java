@@ -9,13 +9,20 @@ public class Gato extends Animal {
         this.conviveComOutrosGatos = conviveComOutrosGatos;
     }
 
-    // Getters e Setters específicos
     public boolean isConviveComOutrosGatos() {
         return conviveComOutrosGatos;
     }
 
     public void setConviveComOutrosGatos(boolean conviveComOutrosGatos) {
         this.conviveComOutrosGatos = conviveComOutrosGatos;
+    }
+
+    @Override
+    public String gerarRelatorio() {
+        return super.gerarRelatorio() +
+                "\n--- Informações Específicas do Gato ---\n" +
+                "Convive com outros gatos: " + (conviveComOutrosGatos ? "Sim" : "Não") + "\n" +
+                "=======================================";
     }
 
     @Override

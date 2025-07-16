@@ -1,6 +1,6 @@
 package Model;
 
-public abstract class Animal {
+public abstract class Animal implements Validavel, Relatorio {
     protected String id;
     protected String nome;
     protected String especie;
@@ -73,6 +73,30 @@ public abstract class Animal {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    public boolean validar() {
+        return this.status.equals("Disponível") &&
+                this.condicaoSaude != null && !this.condicaoSaude.isEmpty() &&
+                this.temperamento != null && !this.temperamento.isEmpty() &&
+                this.nome != null && !this.nome.isEmpty();
+    }
+
+    @Override
+    public String gerarRelatorio() {
+        return String.format(
+                "=== RELATÓRIO DO ANIMAL ===\n" +
+                        "ID: %s\n" +
+                        "Nome: %s\n" +
+                        "Espécie: %s\n" +
+                        "Idade: %d anos\n" +
+                        "Condição de Saúde: %s\n" +
+                        "Temperamento: %s\n" +
+                        "Status: %s\n" +
+                        "==========================",
+                id, nome, especie, idade, condicaoSaude, temperamento, status
+        );
     }
 
     @Override

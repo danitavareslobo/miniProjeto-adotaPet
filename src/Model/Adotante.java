@@ -1,6 +1,6 @@
 package Model;
 
-public class Adotante {
+public class Adotante implements Validavel, Relatorio {
     private String nome;
     private String cpf;
     private String endereco;
@@ -15,7 +15,6 @@ public class Adotante {
         this.ativo = true;
     }
 
-    // Getters e Setters
     public String getNome() {
         return nome;
     }
@@ -54,6 +53,28 @@ public class Adotante {
 
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
+    }
+
+    @Override
+    public boolean validar() {
+        return this.ativo &&
+                this.cpf != null && !this.cpf.isEmpty() &&
+                this.nome != null && !this.nome.isEmpty() &&
+                this.endereco != null && !this.endereco.isEmpty();
+    }
+
+    @Override
+    public String gerarRelatorio() {
+        return String.format(
+                "=== RELATÓRIO DO ADOTANTE ===\n" +
+                        "Nome: %s\n" +
+                        "CPF: %s\n" +
+                        "Endereço: %s\n" +
+                        "Preferências: %s\n" +
+                        "Status: %s\n" +
+                        "=============================",
+                nome, cpf, endereco, preferencias, (ativo ? "Ativo" : "Inativo")
+        );
     }
 
     @Override

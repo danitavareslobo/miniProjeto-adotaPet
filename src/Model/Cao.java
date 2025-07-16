@@ -28,6 +28,15 @@ public class Cao extends Animal {
     }
 
     @Override
+    public String gerarRelatorio() {
+        return super.gerarRelatorio() +
+                "\n--- Informações Específicas do Cão ---\n" +
+                "Porte: " + porte + "\n" +
+                "Necessita Passeio: " + (necessitaPasseio ? "Sim" : "Não") + "\n" +
+                "======================================";
+    }
+
+    @Override
     public String toString() {
         return "Cao{" +
                 "id='" + id + '\'' +
